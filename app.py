@@ -1,3 +1,4 @@
+import os
 from openai import OpenAI
 import streamlit as st
 from streamlit_js_eval import streamlit_js_eval
@@ -75,7 +76,7 @@ if not st.session_state.setup_complete:
         "Choose a company",
         ("Amazon", "Meta", "Udemy", "CloudWithUs", "Nestle", "LinkedIN", "ABT Limited")
     )
-    st.write(f"**Your Information**: {st.session_state["level"]} - {st.session_state["position"]} at {st.session_state["company"]}")
+    st.write(f'**Your Information**: {st.session_state["level"]} - {st.session_state["position"]} at {st.session_state["company"]}')
 
 if st.button("Start Interview", on_click = complete_setup):
     st.write("Setup completed. Starting the Interview...")
@@ -87,7 +88,8 @@ if st.session_state.setup_complete and not st.session_state.feedback_shown and n
     """,
     icon = "👋"
     )
-    client = OpenAI(api_key = st.secrets["OPENAI_API_KEY"])
+    # client = OpenAI(api_key = st.secrets["OPENAI_API_KEY"])
+    client = OpenAI()
 
     if "openai_model" not in st.session_state:
         st.session_state["openai_model"] = "gpt-4o"
@@ -95,10 +97,11 @@ if st.session_state.setup_complete and not st.session_state.feedback_shown and n
     if not st.session_state.messages:
         st.session_state.messages = [{
             "role": "system",
-            "content": f"You are an HR executive that interviews an interviewee called {st.session_state["name"]} "
-            f"with expirience {st.session_state["experience"]} and skills {st.session_state["skills"]}. "
-            f"You should interview him for the position {st.session_state["level"]} {st.session_state["position"]} "
-            f"at the company {st.session_state["company"]}"}]
+            "content": f'You are an HR executive that interviews an interviewee called {st.session_state["name"]} '
+            f'with expirience {st.session_state["experience"]} and skills {st.session_state["skills"]}. '
+            f'You should interview him for the position {st.session_state["level"]} {st.session_state["position"]} '
+            f'at the company {st.session_state["company"]}'
+            }]
         
 
     for message in st.session_state.messages:
@@ -137,7 +140,8 @@ if st.session_state.feedback_shown:
     
     conversation_history = "\n".join(f"{msg['role']}: {msg['content']}" for msg in st.session_state.messages)
     
-    feedback_client = OpenAI(api_key = st.secrets["OPENAI_API_KEY"])
+    # feedback_client = OpenAI(api_key = st.secrets["OPENAI_API_KEY"])
+    feedback_client = OpenAI()
     
     feedback_completion = feedback_client.chat.completions.create(
         model = "gpt-4o",
